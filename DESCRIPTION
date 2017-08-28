@@ -1,4 +1,4 @@
-Package: kikapputil
+Package: kikapputils
 Title: Frequently Used Functions (one line, title case)
 Version: 1.0
 Authors@R: person("Kristopher", "Kapphahn", email = "kikapphahn@gmail.com", role = c("aut", "cre"))
