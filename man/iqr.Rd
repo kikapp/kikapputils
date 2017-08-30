@@ -8,6 +8,10 @@ iqr(x, width = T, na.rm = F)
 }
 \arguments{
 \item{x}{An array of numbers.}
+
+\item{width}{A boolean indicating whether function should return with or endpoints}
+
+\item{na.rm}{A boolean indicating whether NAs should be removed}
 }
 \value{
 x's IQR or width of x's IQR

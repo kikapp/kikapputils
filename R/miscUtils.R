@@ -13,12 +13,26 @@ logit <- function( x ) {
   }
 }
 
+#' Print numbers to an arbitrary number of decimal places
+#'
+#' @param .x A number
+#' @param .dec An integer indicating the number of decimal places to use and round to
+#'
+#' @examples
+#' printDec(345.23, 4)
+#' [1] "345.2300"
+#'
+printDec <- function(.x, .dec = 2) {
+  gsub(" {1,}", "", format(round(.x, .dec), nsmall = .dec))
+}
+
 #' Calculate the inverse logit of a number
 #'
 #' @param x A number.
 #' @return exp(x) / (1 + exp(x))
 #' @examples
 #' alogit(0.9)
+#' [1] 0.7109495
 #'
 alogit <- function(x) {
   exp( x ) / ( 1 + exp(x) )
@@ -42,6 +56,9 @@ exp10 <- function(x) {
 #' in quantile() function
 #'
 #' @param x An array of numbers.
+#' @param width A boolean indicating whether function should return with or endpoints
+#' @param na.rm A boolean indicating whether NAs should be removed
+#'
 #' @return x's IQR or width of x's IQR
 #' @examples
 #' iqr(1:100, width = T)

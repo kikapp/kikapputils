@@ -1,6 +1,6 @@
 Package: kikapputils
 Title: Frequently Used Functions (one line, title case)
-Version: 1.0
+Version: 1.1
 Authors@R: person("Kristopher", "Kapphahn", email = "kikapphahn@gmail.com", role = c("aut", "cre"))
 Description: A set of utility functions.
 Depends: R (>= 3.1.0)
