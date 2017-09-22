@@ -245,8 +245,17 @@ openFilesInDirectory <- function(directory,
   data_list <- llply(file_array, function(file_path, delim_str) {
     cat(file_path, "\n")
     to_return <- read.table(file = file_path, header = header, sep = sep, stringsAsFactors = FALSE, fill=fill, quote="\"", na.strings = na.strings, skip = skip )
-    to_return["loaded_file_name"] <- tail(strsplit(file_path, "/")[[1]],1)
-    return(to_return)
+
+    if(nrow(to_return) > 0 ) {
+      to_return["loaded_file_name"] <- tail(strsplit(file_path, "/")[[1]],1)
+      return(to_return)
+    } else {
+      cat(tail(strsplit(file_path, "/")[[1]],1), " was empty\n")
+      warning(tail(strsplit(file_path, "/")[[1]],1), " was empty\n")
+      to_return["loaded_file_name"] <- NULL
+      return(to_return)
+
+    }
   }, delim_str)
 
   if(merge |  length(file_array) == 1) {
