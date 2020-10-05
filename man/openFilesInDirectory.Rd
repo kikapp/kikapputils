@@ -5,8 +5,16 @@
 \title{Loads and combines files in a folder that match a specified
 string}
 \usage{
-openFilesInDirectory(directory, match_string, merge = FALSE, sep = ",",
-  na.strings = "NA", header = T, fill = T, skip = 0)
+openFilesInDirectory(
+  directory,
+  match_string,
+  merge = FALSE,
+  sep = ",",
+  na.strings = "NA",
+  header = T,
+  fill = T,
+  skip = 0
+)
 }
 \arguments{
 \item{directory}{the directory in which to search for files}

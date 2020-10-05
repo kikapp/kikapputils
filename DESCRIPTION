@@ -1,10 +1,10 @@
 Package: kikapputils
 Title: Frequently Used Functions (one line, title case)
-Version: 1.1
+Version: 1.5
 Authors@R: person("Kristopher", "Kapphahn", email = "kikapphahn@gmail.com", role = c("aut", "cre"))
 Description: A set of utility functions.
-Depends: R (>= 3.1.0)
-Imports: ggplot2, plyr
+Depends: R (>= 4.0.0)
+Imports: ggplot2, purrr, dplyr, stringr
 License: GPL
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.0

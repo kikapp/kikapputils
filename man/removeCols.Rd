@@ -32,5 +32,4 @@ Use regexp matching to remove columns from a data frame
 1 4
 2 5
 3 6
-
 }

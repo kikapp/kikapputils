@@ -17,5 +17,4 @@ Calculate the logit of a number
 }
 \examples{
 logit(0.9)
-
 }

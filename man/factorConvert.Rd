@@ -4,7 +4,7 @@
 \alias{factorConvert}
 \title{Converts factors into numeric or character arrays}
 \usage{
-factorConvert(var, to = "numeric")
+factorConvert(var, to = "character")
 }
 \arguments{
 \item{var}{an array of factors to be converted}
@@ -24,5 +24,4 @@ Converts factors into numeric or character arrays
 [1] "1" "2" "3" "4" "5"
 > factorConvert(var = as.factor(1:5), to = "n")
 [1] 1 2 3 4 5
-
 }

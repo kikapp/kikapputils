@@ -23,5 +23,4 @@ incremented integer. Uses forward slashes, yo.
 \examples{
 createFolder("~/", "newFolder")
 
-
 }

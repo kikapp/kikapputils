@@ -18,5 +18,4 @@ Calculate the inverse logit of a number
 \examples{
 alogit(0.9)
 [1] 0.7109495
-
 }

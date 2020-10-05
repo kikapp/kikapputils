@@ -1,10 +1,50 @@
+
+
+#' Pools estimates from imputed data using Rubin's Rules
+#'
+#' @param estimate A set of parameter estimates from multiple
+#' imputed data sets
+#' @param se A set of standard errors corresponding to the
+#' parameter estimates in estimate
+#'
+#' @examples poolImpute(1:10, 1:10/5)
+#' >   pooled_coef pooled_se  pooled_p
+#' > 1         5.5  3.409301 0.1403821
+#' @export
+
+#########################################################
+poolImpute <- function(estimate, se) {
+  # https://bookdown.org/mwheymans/bookmi/rubins-rules.html
+  m <- length(estimate)
+
+  Q_m <- mean(estimate, na.rm=TRUE) #mean estimates
+  U_m <- mean(se^2, na.rm=TRUE) #mean variance of estimates
+  B_m <- var(estimate) #across imputation variance
+
+  T_m <- U_m + ( 1 + 1 / m ) * B_m #total variance
+
+  r_m <- ( 1 + 1 / m ) * B_m / U_m #relative increase in variance due to nonresponse
+
+  nu <- ( m - 1 ) * ( 1 + 1 / r_m^2 ) #DOF for reference t distribution
+  # nu <- ( m - 1 ) * ( 1 + 1 / r_m )^2 #DOF for reference t distribution
+
+  pval <- pf( (0 - Q_m)^2 / T_m, df1 = 1, df2 = nu, lower.tail = FALSE)
+
+  return(data.frame(pooled_coef = Q_m,
+                    pooled_se = sqrt(T_m),
+                    pooled_p = pval) )
+}
+
+
+
 #' Calculate the logit of a number
 #'
 #' @param x A number between 0 and 1.
 #' @return log( x / ( 1 - x ) )
 #' @examples
 #' logit(0.9)
-#'
+#' @export
+
 logit <- function( x ) {
   if( x >= 0 & x <= 1 ) {
     log( x / ( 1 - x ) )
@@ -21,7 +61,8 @@ logit <- function( x ) {
 #' @examples
 #' printDec(345.23, 4)
 #' [1] "345.2300"
-#'
+#' @export
+
 printDec <- function(.x, .dec = 2) {
   gsub(" {1,}", "", format(round(.x, .dec), nsmall = .dec))
 }
@@ -33,7 +74,8 @@ printDec <- function(.x, .dec = 2) {
 #' @examples
 #' alogit(0.9)
 #' [1] 0.7109495
-#'
+#' @export
+
 alogit <- function(x) {
   exp( x ) / ( 1 + exp(x) )
 }
@@ -44,7 +86,8 @@ alogit <- function(x) {
 #' @return 10^x
 #' @examples
 #' exp10(0.9)
-#'
+#' @export
+
 exp10 <- function(x) {
   return (10^x)
 }
@@ -63,6 +106,7 @@ exp10 <- function(x) {
 #' @examples
 #' iqr(1:100, width = T)
 #' iqr(1:100, width = F)
+#' @export
 
 iqr <- function(x, width = T, na.rm = F) {
   if( width ) {
@@ -83,6 +127,7 @@ iqr <- function(x, width = T, na.rm = F) {
 #' @return a data frame containing column class information
 #' @examples
 #' colClasses(data.frame(x = pi, y = factor(letters), z = letters, stringsAsFactors = F) )
+#' @export
 
 colClasses <- function(.df) {
   if (class(.df) != "data.frame") {
@@ -111,7 +156,8 @@ colClasses <- function(.df) {
 #' @examples
 #' createFolder("~/", "newFolder")
 #'
-#'
+#' @export
+
 createFolder <- function(.path, .name) {
   .increment <- 1
   .folder_name <- .name
@@ -148,41 +194,42 @@ createFolder <- function(.path, .name) {
 #' > 1 of 3 (33.3%) remaining
 #' > X1 X2 X3
 #' > 2  0 NA  0
-#'
-removeNAs <- function(.df, .vars) {
+#' @export
 
-  to_remove <- llply(.vars, function(..var, ..df) {
-    ..na_vals <- which(is.na(..df[[..var]]))
-    if (length(..na_vals) < 1) {
-      cat(paste0("No missing values found in ", ..var), "\n")
+removeNAs <- function(df, vars) {
+
+  to_remove <- purrr::map(vars, function(.var, .df) {
+    .na_vals <- which(is.na(.df[[.var]]))
+    if (length(.na_vals) < 1) {
+      cat(paste0("No missing values found in ", .var, "\n"))
       return(NA)
     } else {
-      cat(paste0(length(..na_vals),
-                 " (", round( length(..na_vals)/length(..df[[..var]]),3)*100,
-                 "%) missing value(s) found in ", ..var), "\n")
-      return(..na_vals)
+      cat(paste0(length(.na_vals),
+                 " (", round( length(.na_vals)/length(.df[[.var]]),3)*100,
+                 "%) missing value(s) found in ", .var, "\n"))
+      return(.na_vals)
     }
-  }, .df)
+  }, df)
 
   to_remove <- unique( unlist(to_remove))
   to_remove <- to_remove[!is.na(to_remove)]
 
   if (length(to_remove) < 1) {
     cat(paste0("No missing values found in specified variables,\nreturning original dataset with ",
-               nrow(.df), " observations."), "\n")
-    return(.df)
+               nrow(df), " observations.", "\n"))
+    return(df)
   }
-  if (length(to_remove) == nrow(.df)) {
-    cat(paste0("All observations have missing values, returning empty dataset"), "\n")
-    return(.df[-to_remove, ])
+  if (length(to_remove) == nrow(df)) {
+    cat(paste0("All observations have missing values, returning empty dataset", "\n"))
+    return(df[-to_remove, ])
   }
   if (length(to_remove) >= 1){
     cat(paste0(length(to_remove),
                " observation(s) with missing values removed from dataset,\n",
-               nrow(.df[-to_remove, ]), " of ", nrow(.df),
-               " (", 100*round(nrow(.df[-to_remove, ])/nrow(.df),3), "%)",
-               " remaining"), "\n")
-    return(.df[-to_remove, ])
+               nrow(df[-to_remove, ]), " of ", nrow(df),
+               " (", 100*round(nrow(df[-to_remove, ])/nrow(df),3), "%)",
+               " remaining", "\n"))
+    return(df[-to_remove, ])
   }
 }
 
@@ -204,7 +251,8 @@ removeNAs <- function(.df, .vars) {
 #' 0
 #' > cUnique(x = as.numeric(letters), count.na = T)
 #' 1
-#
+#' @export
+
 cUnique <- function(x, count.na = FALSE) {
   members <- unique(x)
   if (NA %in% members & !count.na) {
@@ -230,7 +278,8 @@ cUnique <- function(x, count.na = FALSE) {
 #' @param fill T/F If TRUE then in case the rows have unequal length, blank fields are implicitly added
 #' @param skip the number of lines of the data file to skip before beginning to read data
 #' @return a list or data frame containing load data from all files matching match_string in directory
-#'
+#' @export
+
 openFilesInDirectory <- function(directory,
                                  match_string,
                                  merge = FALSE,
@@ -242,9 +291,16 @@ openFilesInDirectory <- function(directory,
   require(plyr)
   file_array <-  paste0(directory, "/", list.files(directory)[grep(pattern=match_string, list.files(directory))])
 
-  data_list <- llply(file_array, function(file_path, delim_str) {
+  data_list <- purrr::map(file_array, function(file_path, delim_str) {
     cat(file_path, "\n")
-    to_return <- read.table(file = file_path, header = header, sep = sep, stringsAsFactors = FALSE, fill=fill, quote="\"", na.strings = na.strings, skip = skip )
+    to_return <- read.table(file = file_path,
+                            header = header,
+                            sep = sep,
+                            stringsAsFactors = FALSE,
+                            fill=fill,
+                            quote="\"",
+                            na.strings = na.strings,
+                            skip = skip )
 
     if(nrow(to_return) > 0 ) {
       to_return["loaded_file_name"] <- tail(strsplit(file_path, "/")[[1]],1)
@@ -259,7 +315,7 @@ openFilesInDirectory <- function(directory,
   }, delim_str)
 
   if(merge |  length(file_array) == 1) {
-    data_list <- ldply(data_list, identity)
+    data_list <- purrr::map_dfr(data_list, identity)
   }
 
   return(data_list)
@@ -279,8 +335,9 @@ openFilesInDirectory <- function(directory,
 #' [1] "1" "2" "3" "4" "5"
 #' > factorConvert(var = as.factor(1:5), to = "n")
 #' [1] 1 2 3 4 5
-#'
-factorConvert <- function(var, to = "numeric") {
+#' @export
+
+factorConvert <- function(var, to = "character") {
 
   if (class(var) != "factor" ) {
     cat("var is not a factor\n")
@@ -320,10 +377,11 @@ factorConvert <- function(var, to = "numeric") {
 #' 2   Time      578 1.0000000
 #' 3  Chick        0 0.0000000
 #' 4   Diet        0 0.0000000
-#'
+#' @export
+
 showNAs <- function(the_only_argument_is_a_data_frame) {
   df_names <- names(the_only_argument_is_a_data_frame)
-  to_return <- ldply(df_names, function(var_name, temp_df) {
+  to_return <- purrr::map_dfr(df_names, function(var_name, temp_df) {
     to_return <- temp_df[[var_name]]
     to_return[to_return == "MISSING"] <- NA
     to_return[to_return == ""] <- NA
@@ -349,9 +407,11 @@ showNAs <- function(the_only_argument_is_a_data_frame) {
 #' > plot_data <- getKMData(survival_fit)
 #' > ggplot(data = plot_data, aes(x = time, y = surv, color = strata)) +
 #' + geom_line()
+#' @export
+
 getKMData <- function(.survfit) {
 
-  ldply(names(.survfit$strata), function(..strata, ..survfit) {
+  purrr::map_dfr(names(.survfit$strata), function(..strata, ..survfit) {
     if (which(names(..survfit$strata) == ..strata) == 1) {
       .indices <- 1:cumsum(..survfit$strata)[1]
     } else {
@@ -395,6 +455,7 @@ getKMData <- function(.survfit) {
 #' 1 4
 #' 2 5
 #' 3 6
+#' @export
 #'
 removeCols <- function(.df, .match_string) {
   return(.df[ ,!grepl(.match_string, names(.df)), drop = FALSE])
@@ -404,6 +465,7 @@ removeCols <- function(.df, .match_string) {
 #' A theme for facet plots
 #' #' @description Use regexp matching to remove columns from a data frame
 #' @return a theme object
+#' @export
 
 theme_facet <- function() {
   return(theme_bw() + theme(strip.background = element_rect(color="black", fill = "white"),
@@ -411,6 +473,7 @@ theme_facet <- function() {
 }
 
 #' A theme for cleaner looking heat maps
+#' @export
 theme_heatmap <- function() {
   return(theme_bw() + theme(panel.background = element_blank(),
                             panel.grid.major = element_blank(),
@@ -423,6 +486,7 @@ theme_heatmap <- function() {
 
 #' A blank theme, copied mostly or completely from a blog post
 #' that I can't find anymore
+#' @export
 blankground <- function() {
   theme(panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -441,6 +505,7 @@ blankground <- function() {
 
 #' A completely BW theme, copied mostly or completely from a blog post
 #' that I can't find anymore
+#' @export
 theme_complete_bw <- function (base_size = 11, base_family = "") {
   half_line <- base_size/2
   theme(line = element_line(colour = "black",

@@ -4,7 +4,7 @@
 \alias{removeNAs}
 \title{Removes rows with NAs in a data frame}
 \usage{
-removeNAs(.df, .vars)
+removeNAs(df, vars)
 }
 \arguments{
 \item{.df}{a data frame}
@@ -31,5 +31,4 @@ removeNAs(test_df, c("X1", "X3"))
 > 1 of 3 (33.3\%) remaining
 > X1 X2 X3
 > 2  0 NA  0
-
 }

@@ -17,5 +17,4 @@ Print numbers to an arbitrary number of decimal places
 \examples{
 printDec(345.23, 4)
 [1] "345.2300"
-
 }

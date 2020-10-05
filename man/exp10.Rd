@@ -17,5 +17,4 @@ Ten to the xth
 }
 \examples{
 exp10(0.9)
-
 }

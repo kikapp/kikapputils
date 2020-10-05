@@ -32,5 +32,4 @@ Shows the extent of NAs in a data frame
 2   Time      578 1.0000000
 3  Chick        0 0.0000000
 4   Diet        0 0.0000000
-
 }
