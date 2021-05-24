@@ -6,18 +6,19 @@
 string}
 \usage{
 openFilesInDirectory(
-  directory,
+  dir,
   match_string,
   merge = FALSE,
   sep = ",",
   na.strings = "NA",
   header = T,
   fill = T,
+  quote = "\\"",
   skip = 0
 )
 }
 \arguments{
-\item{directory}{the directory in which to search for files}
+\item{dir}{the directory in which to search for files}
 
 \item{match_string}{all files whose names grep match this string will be loaded}
 
@@ -30,6 +31,8 @@ openFilesInDirectory(
 \item{header}{a T/F value indicating whether the file contains the names of the variables as its first line. If missing, the value is determined from the file format: header is set to TRUE if and only if the first row contains one fewer field than the number of columns.}
 
 \item{fill}{T/F If TRUE then in case the rows have unequal length, blank fields are implicitly added}
+
+\item{quote}{Character indicating characters to use for quote argument in read.table}
 
 \item{skip}{the number of lines of the data file to skip before beginning to read data}
 }

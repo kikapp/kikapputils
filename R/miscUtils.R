@@ -49,22 +49,23 @@ logit <- function( x ) {
   if( x >= 0 & x <= 1 ) {
     log( x / ( 1 - x ) )
   } else {
-    warning("I'm not sure what you heard, but this logit is not defined for x outside of [0,1]")
+    warning("Logit is not defined for x outside of [0,1]")
   }
 }
 
 #' Print numbers to an arbitrary number of decimal places
 #'
-#' @param .x A number
-#' @param .dec An integer indicating the number of decimal places to use and round to
+#' @param x A number
+#' @param dec An integer indicating the number of decimal places to use and round to
 #'
 #' @examples
 #' printDec(345.23, 4)
 #' [1] "345.2300"
+#'
 #' @export
-
-printDec <- function(.x, .dec = 2) {
-  gsub(" {1,}", "", format(round(.x, .dec), nsmall = .dec))
+#'
+printDec <- function(x, dec = 2) {
+  gsub(" {1,}", "", format(round(x, dec), nsmall = dec))
 }
 
 #' Calculate the inverse logit of a number
@@ -123,21 +124,22 @@ iqr <- function(x, width = T, na.rm = F) {
 
 #' Get classes for each column in a dataframe
 #'
-#' @param .df a data frame
+#' @param df a data frame
 #' @return a data frame containing column class information
 #' @examples
 #' colClasses(data.frame(x = pi, y = factor(letters), z = letters, stringsAsFactors = F) )
+#'
 #' @export
-
-colClasses <- function(.df) {
-  if (class(.df) != "data.frame") {
+#'
+colClasses <- function(df) {
+  if (class(df) != "data.frame") {
     warning("Input should be a data frame")
   } else {
-    .cols <- .class <- rep(NA, ncol(.df) )
+    .cols <- .class <- rep(NA, ncol(df) )
 
-    for (.col in 1:ncol(.df) ) {
-      .cols[.col] <- names(.df)[.col]
-      .class[.col] <- paste0(class(.df[[.col]]), collapse = " ")
+    for (.col in 1:ncol(df) ) {
+      .cols[.col] <- names(df)[.col]
+      .class[.col] <- paste0(class(df[[.col]]), collapse = " ")
     }
     return(data.frame(column = .cols, class = .class, stringsAsFactors = F) )
   }
@@ -150,28 +152,30 @@ colClasses <- function(.df) {
 #' folder called .name_copy_x where x is an auto-
 #' incremented integer. Uses forward slashes, yo.
 #'
-#' @param .path path to directory where folder should be created
-#' @param .name name of folder to be created
+#' @param path path to directory where folder should be created
+#' @param name name of folder to be created
 #' @return the path to the newly created folder
 #' @examples
 #' createFolder("~/", "newFolder")
 #'
+#'
 #' @export
-
-createFolder <- function(.path, .name) {
+#'
+createFolder <- function(path, name) {
   .increment <- 1
-  .folder_name <- .name
+  .folder_name <- name
   # if folder name already exists, appends an underscore and
   # an integer to the file name
   # integer is incremented until an unused file name is found
-  while ( !dir.create(paste0(.path, .folder_name), showWarnings = F) ) {
+  while ( !dir.create(paste0(path, .folder_name), showWarnings = F) ) {
     cat("Folder name", .folder_name, "taken, ")
-    .folder_name <- paste0(.name, "_", .increment)
+    .folder_name <- paste0(name, "_", .increment)
     cat("trying", .folder_name, "\n")
     .increment <- .increment + 1
   }
-  return(paste0(.path, .folder_name, "/"))
+  return(paste0(path, .folder_name, "/"))
 }
+
 
 #' Removes rows with NAs in a data frame
 #'
@@ -269,36 +273,38 @@ cUnique <- function(x, count.na = FALSE) {
 #' Returns either a list containing all loaded files, or
 #' a data frame containing merged loaded files
 #'
-#' @param directory the directory in which to search for files
+#' @param dir the directory in which to search for files
 #' @param match_string all files whose names grep match this string will be loaded
 #' @param merge T/F should loaded files be merged into a data frame
 #' @param sep field separator character
 #' @param na.strings a character vector of strings whic are to be interpreted as NA values
 #' @param header a T/F value indicating whether the file contains the names of the variables as its first line. If missing, the value is determined from the file format: header is set to TRUE if and only if the first row contains one fewer field than the number of columns.
 #' @param fill T/F If TRUE then in case the rows have unequal length, blank fields are implicitly added
+#' @param quote Character indicating characters to use for quote argument in read.table
 #' @param skip the number of lines of the data file to skip before beginning to read data
 #' @return a list or data frame containing load data from all files matching match_string in directory
+#'
+#'
 #' @export
-
-openFilesInDirectory <- function(directory,
+#'
+openFilesInDirectory <- function(dir,
                                  match_string,
                                  merge = FALSE,
                                  sep = ",",
                                  na.strings = "NA",
                                  header = T,
-                                 fill=T,
+                                 fill = T,
+                                 quote="\"",
                                  skip = 0) {
-  require(plyr)
-  file_array <-  paste0(directory, "/", list.files(directory)[grep(pattern=match_string, list.files(directory))])
+  file_array <-  paste0(dir, "/", list.files(dir)[grep(pattern=match_string, list.files(dir))])
 
   data_list <- purrr::map(file_array, function(file_path, delim_str) {
     cat(file_path, "\n")
     to_return <- read.table(file = file_path,
                             header = header,
-                            sep = sep,
-                            stringsAsFactors = FALSE,
-                            fill=fill,
-                            quote="\"",
+                            sep = sep, stringsAsFactors = FALSE,
+                            fill = fill,
+                            quote = quote,
                             na.strings = na.strings,
                             skip = skip )
 
@@ -357,7 +363,8 @@ factorConvert <- function(var, to = "character") {
 
 #' Shows the extent of NAs in a data frame
 #'
-#' @param the_only_argument_is_a_data_frame a data frame whose missingness is a mystery
+#' @param df a data frame whose missingness is a mystery
+#' @param missing_strings an array of characters indicating which strings correspond to missing values
 #' @return a data frame containing count and proportion missing for each variable in the_only_argument_is_a_data_frame
 #'
 #' @examples
@@ -377,19 +384,20 @@ factorConvert <- function(var, to = "character") {
 #' 2   Time      578 1.0000000
 #' 3  Chick        0 0.0000000
 #' 4   Diet        0 0.0000000
+#'
 #' @export
+#'
+showNAs <- function(df, missing_strings = c("MISSING", "missing", "")) {
 
-showNAs <- function(the_only_argument_is_a_data_frame) {
-  df_names <- names(the_only_argument_is_a_data_frame)
-  to_return <- purrr::map_dfr(df_names, function(var_name, temp_df) {
-    to_return <- temp_df[[var_name]]
-    to_return[to_return == "MISSING"] <- NA
-    to_return[to_return == ""] <- NA
+  to_return <- purrr::map2_dfr(df, names(df), function(temp_df, var_name) {
+
+    temp_df[temp_df %in% missing_strings] <- NA
+
     return( data.frame(var = var_name,
-                       NA_count = sum(is.na(to_return)),
-                       NA_proportion = mean(is.na(to_return)),
-                       stringsAsFactors = F))
-  }, the_only_argument_is_a_data_frame)
+                       NA_count = sum(is.na(temp_df)),
+                       NA_proportion = mean(is.na(temp_df)),
+                       stringsAsFactors = FALSE))
+  })
   return(to_return)
 }
 
@@ -399,45 +407,51 @@ showNAs <- function(the_only_argument_is_a_data_frame) {
 #' @description Transforms a survfit object into a data frame
 #' suitable for generating Kaplan-Meier plots
 #'
-#' @param .survfit is a survfit object
+#' @param survfit is a survfit object
 #' @return a data frame containing data from .survfit in a more-easily-plotable format
 #'
 #' @examples
+#' > library(survival)
+#' > library(ggplot2)
 #' > survival_fit <- survfit(Surv(time, status) ~ x, data = aml)
 #' > plot_data <- getKMData(survival_fit)
 #' > ggplot(data = plot_data, aes(x = time, y = surv, color = strata)) +
 #' + geom_line()
+#'
 #' @export
+#'
+getKMData <- function(survfit) {
 
-getKMData <- function(.survfit) {
+  strata <- names(survfit$strata)
+  purrr::map_dfr(strata, function(.stratum, .survfit) {
 
-  purrr::map_dfr(names(.survfit$strata), function(..strata, ..survfit) {
-    if (which(names(..survfit$strata) == ..strata) == 1) {
-      .indices <- 1:cumsum(..survfit$strata)[1]
+    if (which(names(.survfit$strata) == .stratum) == 1) {
+      .indices <- 1:cumsum(.survfit$strata)[1]
     } else {
-      .indices <- (cumsum(..survfit$strata)[which(names(..survfit$strata) == ..strata) - 1] + 1):cumsum(..survfit$strata)[which(names(..survfit$strata) == ..strata)]
+      .indices <- (cumsum(.survfit$strata)[which(names(.survfit$strata) == .stratum) - 1] + 1):cumsum(.survfit$strata)[which(names(.survfit$strata) == .stratum)]
     }
-    .tor <- data.frame(strata = ..strata,
-                       time = ..survfit$time[.indices],
-                       n_risk = ..survfit$n.risk[.indices],
-                       n_event  = ..survfit$n.event[.indices],
-                       n_censor = ..survfit$n.censor[.indices],
-                       surv = ..survfit$surv[.indices],
-                       std_err = ..survfit$std.err[.indices],
-                       upper = ..survfit$upper[.indices],
-                       lower = ..survfit$lower[.indices],
-                       conf_type = ..survfit$conf.type,
-                       conf_int = ..survfit$conf.int)
+    .tor <- data.frame(strata =    .stratum,
+                       time =      .survfit$time[.indices],
+                       n_risk =    .survfit$n.risk[.indices],
+                       n_event  =  .survfit$n.event[.indices],
+                       n_censor =  .survfit$n.censor[.indices],
+                       surv =      .survfit$surv[.indices],
+                       std_err =   .survfit$std.err[.indices],
+                       upper =     .survfit$upper[.indices],
+                       lower =     .survfit$lower[.indices],
+                       conf_type = .survfit$conf.type,
+                       conf_int =  .survfit$conf.int)
     .tor
 
-  }, .survfit)
+  }, survfit)
+
 }
 
 #' Remove columns from a data frame
 #'
 #' @description Use regexp matching to remove columns from a data frame
-#' @param .df is a data frame
-#' @param .match_string is a string for grepl matching
+#' @param df is a data frame
+#' @param match_string is a string for grepl matching
 #' @return .df with columns matched by .match_string removed
 #'
 #' @examples
@@ -455,15 +469,17 @@ getKMData <- function(.survfit) {
 #' 1 4
 #' 2 5
 #' 3 6
+#'
 #' @export
 #'
-removeCols <- function(.df, .match_string) {
-  return(.df[ ,!grepl(.match_string, names(.df)), drop = FALSE])
+removeCols <- function(df, match_string) {
+  return(df[ ,!grepl(match_string, names(df)), drop = FALSE])
 }
 
 
+
+
 #' A theme for facet plots
-#' #' @description Use regexp matching to remove columns from a data frame
 #' @return a theme object
 #' @export
 

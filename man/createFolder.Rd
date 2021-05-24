@@ -4,12 +4,12 @@
 \alias{createFolder}
 \title{Create a folder}
 \usage{
-createFolder(.path, .name)
+createFolder(path, name)
 }
 \arguments{
-\item{.path}{path to directory where folder should be created}
+\item{path}{path to directory where folder should be created}
 
-\item{.name}{name of folder to be created}
+\item{name}{name of folder to be created}
 }
 \value{
 the path to the newly created folder
@@ -22,5 +22,6 @@ incremented integer. Uses forward slashes, yo.
 }
 \examples{
 createFolder("~/", "newFolder")
+
 
 }

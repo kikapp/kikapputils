@@ -4,10 +4,12 @@
 \alias{showNAs}
 \title{Shows the extent of NAs in a data frame}
 \usage{
-showNAs(the_only_argument_is_a_data_frame)
+showNAs(df, missing_strings = c("MISSING", "missing", ""))
 }
 \arguments{
-\item{the_only_argument_is_a_data_frame}{a data frame whose missingness is a mystery}
+\item{df}{a data frame whose missingness is a mystery}
+
+\item{missing_strings}{an array of characters indicating which strings correspond to missing values}
 }
 \value{
 a data frame containing count and proportion missing for each variable in the_only_argument_is_a_data_frame
@@ -32,4 +34,5 @@ Shows the extent of NAs in a data frame
 2   Time      578 1.0000000
 3  Chick        0 0.0000000
 4   Diet        0 0.0000000
+
 }

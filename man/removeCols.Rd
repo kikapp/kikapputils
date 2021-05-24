@@ -4,12 +4,12 @@
 \alias{removeCols}
 \title{Remove columns from a data frame}
 \usage{
-removeCols(.df, .match_string)
+removeCols(df, match_string)
 }
 \arguments{
-\item{.df}{is a data frame}
+\item{df}{is a data frame}
 
-\item{.match_string}{is a string for grepl matching}
+\item{match_string}{is a string for grepl matching}
 }
 \value{
 .df with columns matched by .match_string removed
@@ -32,4 +32,5 @@ Use regexp matching to remove columns from a data frame
 1 4
 2 5
 3 6
+
 }

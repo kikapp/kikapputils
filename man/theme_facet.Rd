@@ -2,8 +2,7 @@
 % Please edit documentation in R/miscUtils.R
 \name{theme_facet}
 \alias{theme_facet}
-\title{A theme for facet plots
-#' @description Use regexp matching to remove columns from a data frame}
+\title{A theme for facet plots}
 \usage{
 theme_facet()
 }
@@ -12,5 +11,4 @@ a theme object
 }
 \description{
 A theme for facet plots
-#' @description Use regexp matching to remove columns from a data frame
 }

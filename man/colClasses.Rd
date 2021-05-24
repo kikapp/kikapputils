@@ -4,10 +4,10 @@
 \alias{colClasses}
 \title{Get classes for each column in a dataframe}
 \usage{
-colClasses(.df)
+colClasses(df)
 }
 \arguments{
-\item{.df}{a data frame}
+\item{df}{a data frame}
 }
 \value{
 a data frame containing column class information
@@ -17,4 +17,5 @@ Get classes for each column in a dataframe
 }
 \examples{
 colClasses(data.frame(x = pi, y = factor(letters), z = letters, stringsAsFactors = F) )
+
 }

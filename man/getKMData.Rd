@@ -4,10 +4,10 @@
 \alias{getKMData}
 \title{Transform survfit object to data.frame}
 \usage{
-getKMData(.survfit)
+getKMData(survfit)
 }
 \arguments{
-\item{.survfit}{is a survfit object}
+\item{survfit}{is a survfit object}
 }
 \value{
 a data frame containing data from .survfit in a more-easily-plotable format
@@ -17,8 +17,11 @@ Transforms a survfit object into a data frame
 suitable for generating Kaplan-Meier plots
 }
 \examples{
+> library(survival)
+> library(ggplot2)
 > survival_fit <- survfit(Surv(time, status) ~ x, data = aml)
 > plot_data <- getKMData(survival_fit)
 > ggplot(data = plot_data, aes(x = time, y = surv, color = strata)) +
 + geom_line()
+
 }

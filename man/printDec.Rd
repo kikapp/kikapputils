@@ -4,12 +4,12 @@
 \alias{printDec}
 \title{Print numbers to an arbitrary number of decimal places}
 \usage{
-printDec(.x, .dec = 2)
+printDec(x, dec = 2)
 }
 \arguments{
-\item{.x}{A number}
+\item{x}{A number}
 
-\item{.dec}{An integer indicating the number of decimal places to use and round to}
+\item{dec}{An integer indicating the number of decimal places to use and round to}
 }
 \description{
 Print numbers to an arbitrary number of decimal places
@@ -17,4 +17,5 @@ Print numbers to an arbitrary number of decimal places
 \examples{
 printDec(345.23, 4)
 [1] "345.2300"
+
 }
